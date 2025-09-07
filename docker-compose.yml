@@ -1,12 +1,24 @@
 version: "3.9"
+
 services:
-  web:
-    build: .
-    restart: always
-    volumes:
-      - ./app/:/code/
+  circle-detector:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: circle-detector-api
+    restart: unless-stopped
     ports:
-      - "8021:5000"
-    
-    environment: 
-      FLASK_DEBUG: 1
+      - "5000:5000"
+    volumes:
+      - ./uploads:/app/uploads
+      - ./outputs:/app/outputs
+      - ./extracted_circles:/app/extracted_circles
+    environment:
+      - FLASK_ENV=development
+      - FLASK_DEBUG=1
+    networks:
+      - circle-net
+
+networks:
+  circle-net:
+    driver: bridge
